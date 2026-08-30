@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- WaveNow Dark Theme - deep blue, follows system dark mode automatically -->
+    <color name="colorPrimary">#123A5C</color>
+    <color name="colorPrimaryDark">#0A1929</color>
+    <color name="colorAccent">#4FA3E3</color>
+
+    <color name="chatBackground">#0A1929</color>
+    <color name="toolbarBackground">#0D2438</color>
+    <color name="toolbarText">#E9EDEF</color>
+
+    <color name="bubbleSent">#1F4068</color>
+    <color name="bubbleReceived">#17212B</color>
+    <color name="bubbleSentText">#E9EDEF</color>
+    <color name="bubbleReceivedText">#E9EDEF</color>
+
+    <color name="textPrimary">#E9EDEF</color>
+    <color name="textSecondary">#8696A0</color>
+    <color name="divider">#1E2A38</color>
+
+    <color name="onlineGreen">#25D366</color>
+    <color name="unreadBadge">#4FA3E3</color>
+
+    <color name="screenBackground">#0D1B26</color>
+    <color name="inputBackground">#17212B</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.WaveNow" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/screenBackground</item>
+        <item name="android:statusBarColor">@color/toolbarBackground</item>
+        <item name="android:navigationBarColor">@color/toolbarBackground</item>
+    </style>
+
+    <style name="Theme.WaveNow.Splash" parent="Theme.WaveNow">
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="Toolbar.WaveNow" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:background">@color/toolbarBackground</item>
+        <item name="titleTextColor">@color/toolbarText</item>
+    </style>
+</resources>

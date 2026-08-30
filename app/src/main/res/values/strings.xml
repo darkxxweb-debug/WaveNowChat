@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WaveNow</string>
+
+    <!-- Auth -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Log in to continue chatting</string>
+    <string name="username_hint">Username</string>
+    <string name="phone_hint">Phone number</string>
+    <string name="password_hint">Password</string>
+    <string name="display_name_hint">Display name</string>
+    <string name="btn_login">Log In</string>
+    <string name="btn_register">Create Account</string>
+    <string name="no_account">Don\'t have an account? Sign up</string>
+    <string name="have_account">Already have an account? Log in</string>
+    <string name="register_title">Create your account</string>
+    <string name="register_subtitle">Join WaveNow today</string>
+
+    <!-- Main -->
+    <string name="chats_title">Chats</string>
+    <string name="search_hint">Search users</string>
+    <string name="no_chats_yet">No conversations yet.\nSearch a user to start chatting.</string>
+    <string name="online">Online</string>
+    <string name="typing">typing…</string>
+    <string name="last_seen">last seen</string>
+
+    <!-- Chat -->
+    <string name="message_hint">Type a message</string>
+    <string name="send">Send</string>
+
+    <!-- Errors -->
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_fields_required">Please fill in all fields</string>
+    <string name="error_connection">Could not connect to server</string>
+</resources>
