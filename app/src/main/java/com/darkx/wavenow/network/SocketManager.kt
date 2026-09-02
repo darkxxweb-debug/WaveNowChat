@@ -93,6 +93,16 @@ object SocketManager {
         socket?.emit("message_read", data)
     }
 
+    // Mtumiaji ameshahifadhi ujumbe local (Room DB) — mwambie server.
+    // Ukishafika kwa washiriki wote, server itaufuta kwenye DB yake.
+    fun markMessageDelivered(messageId: String, chatId: String) {
+        val data = JSONObject().apply {
+            put("messageId", messageId)
+            put("chatId", chatId)
+        }
+        socket?.emit("message_delivered", data)
+    }
+
     // ---- Listener helpers ----
 
     fun onNewMessage(listener: Emitter.Listener) {
@@ -117,6 +127,10 @@ object SocketManager {
 
     fun onMessageRead(listener: Emitter.Listener) {
         socket?.on("message_read", listener)
+    }
+
+    fun onMessageStatus(listener: Emitter.Listener) {
+        socket?.on("message_status", listener)
     }
 
     fun off(event: String) {
