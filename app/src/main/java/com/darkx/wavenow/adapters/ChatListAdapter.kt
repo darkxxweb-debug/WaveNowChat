@@ -26,17 +26,34 @@ class ChatListAdapter(
         val chat = chats[position]
         val other = chat.otherParticipant(myUserId)
 
-        val displayName = if (chat.isGroup) chat.groupName ?: "Group" else (other?.displayName ?: other?.username ?: "Unknown")
-        holder.binding.txtName.text = displayName
-        holder.binding.txtLastMessage.text = chat.lastMessage?.content ?: "Say hi 👋"
+        holder.binding.txtName.text = chat.displayName(myUserId)
+        holder.binding.txtLastMessage.text = chat.lastMessage?.content ?: when {
+            chat.isChannel() -> "Channel mpya"
+            chat.isGroup() -> "Group mpya"
+            else -> "Say hi 👋"
+        }
 
         chat.lastMessage?.createdAt?.let {
             holder.binding.txtTime.text = it.take(16).replace("T", " ").takeLast(5)
         } ?: run { holder.binding.txtTime.text = "" }
 
-        holder.binding.onlineDot.visibility = if (!chat.isGroup && other?.isOnline == true) View.VISIBLE else View.GONE
+        holder.binding.onlineDot.visibility =
+            if (chat.isDirect() && other?.isOnline == true) View.VISIBLE else View.GONE
 
-        val avatarUrl = if (chat.isGroup) chat.groupAvatar else other?.avatarUrl
+        // Onyesha icon ndogo ya group/channel juu ya avatar
+        when {
+            chat.isChannel() -> {
+                holder.binding.imgTypeBadge.setImageResource(R.drawable.ic_channel)
+                holder.binding.imgTypeBadge.visibility = View.VISIBLE
+            }
+            chat.isGroup() -> {
+                holder.binding.imgTypeBadge.setImageResource(R.drawable.ic_group)
+                holder.binding.imgTypeBadge.visibility = View.VISIBLE
+            }
+            else -> holder.binding.imgTypeBadge.visibility = View.GONE
+        }
+
+        val avatarUrl = chat.displayAvatar(myUserId)
         if (!avatarUrl.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(avatarUrl)
