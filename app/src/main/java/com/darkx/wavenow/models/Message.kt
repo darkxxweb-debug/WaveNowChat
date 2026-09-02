@@ -7,6 +7,7 @@ data class Message(
     val type: String = "text",
     val content: String,
     val status: String = "sent",
+    val deliveredTo: List<String>? = null,
     val readBy: List<String>? = null,
     val replyTo: String? = null,
     val createdAt: String? = null

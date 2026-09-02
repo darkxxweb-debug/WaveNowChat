@@ -19,10 +19,28 @@ data class AuthResponse(
 )
 
 data class CreateChatRequest(
-    val participantId: String? = null,
-    val isGroup: Boolean = false,
-    val groupName: String? = null,
-    val participantIds: List<String>? = null
+    val participantId: String
+)
+
+data class CreateGroupRequest(
+    val name: String,
+    val avatarUrl: String? = null,
+    val participantIds: List<String> = emptyList()
+)
+
+data class CreateChannelRequest(
+    val name: String,
+    val description: String? = null,
+    val avatarUrl: String? = null
+)
+
+data class FcmTokenRequest(
+    val fcmToken: String
+)
+
+data class MembersUpdateRequest(
+    val add: List<String> = emptyList(),
+    val remove: List<String> = emptyList()
 )
 
 data class SendMessageRequest(
