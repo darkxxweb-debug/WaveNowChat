@@ -30,6 +30,15 @@
             android:layout_gravity="bottom|end"
             android:background="@drawable/bg_online_dot"
             android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/imgTypeBadge"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom|end"
+            android:visibility="gone"
+            app:tint="@color/textSecondary"
+            android:contentDescription="@null"/>
     </FrameLayout>
 
     <LinearLayout
