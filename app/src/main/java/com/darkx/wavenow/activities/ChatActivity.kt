@@ -1,13 +1,17 @@
 package com.darkx.wavenow.activities
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.darkx.wavenow.adapters.MessageAdapter
 import com.darkx.wavenow.databinding.ActivityChatBinding
+import com.darkx.wavenow.local.AppDatabase
+import com.darkx.wavenow.local.toEntity
+import com.darkx.wavenow.local.toMessage
 import com.darkx.wavenow.models.Message
-import com.darkx.wavenow.models.SendMessageRequest
 import com.darkx.wavenow.network.RetrofitClient
 import com.darkx.wavenow.network.SocketManager
 import com.darkx.wavenow.utils.TokenManager
@@ -20,10 +24,13 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private lateinit var tokenManager: TokenManager
     private lateinit var adapter: MessageAdapter
+    private lateinit var db: AppDatabase
 
     private var chatId: String = ""
     private var myUserId: String = ""
     private var otherUserId: String? = null
+    private var chatType: String = "direct"
+    private var canPost: Boolean = true // kwa channel: admin/owner pekee
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +40,11 @@ class ChatActivity : AppCompatActivity() {
 
         tokenManager = TokenManager(this)
         myUserId = tokenManager.getUser()?.resolvedId() ?: ""
+        db = AppDatabase.getInstance(this)
 
         chatId = intent.getStringExtra("chatId") ?: ""
         otherUserId = intent.getStringExtra("otherUserId")
+        chatType = intent.getStringExtra("chatType") ?: "direct"
         val chatName = intent.getStringExtra("chatName") ?: "Chat"
 
         supportActionBar?.title = chatName
@@ -49,18 +58,47 @@ class ChatActivity : AppCompatActivity() {
 
         binding.btnSend.setOnClickListener { sendMessage() }
 
-        // Join this chat's socket room so we receive messages instantly
         SocketManager.joinChat(chatId)
         listenForIncomingMessages()
+        listenForMessageStatus()
+
+        // Onyesha kwanza ujumbe uliohifadhiwa local (haraka, hata bila internet)
+        loadLocalHistory()
+
+        if (chatType == "channel") checkChannelPostingPermission()
 
         loadMessageHistory()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // Stop listening for this chat's messages to avoid duplicate listeners
-        // when the user opens multiple chats one after another
         SocketManager.off("new_message")
+        SocketManager.off("message_status")
+    }
+
+    private fun checkChannelPostingPermission() {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.getApi(this@ChatActivity).getChat(chatId)
+                val chat = response.body() ?: return@launch
+                canPost = chat.isAdmin(myUserId)
+                if (!canPost) {
+                    binding.inputMessage.isEnabled = false
+                    binding.inputMessage.hint = "Admin pekee ndiye anaweza kutuma kwenye channel hii"
+                    binding.btnSend.visibility = View.GONE
+                }
+            } catch (_: Exception) { /* tuache default: ruhusiwa kuandika */ }
+        }
+    }
+
+    private fun loadLocalHistory() {
+        lifecycleScope.launch {
+            val local = db.messageDao().getMessages(chatId)
+            if (local.isNotEmpty()) {
+                adapter.setMessages(local.map { it.toMessage() })
+                scrollToBottom()
+            }
+        }
     }
 
     private fun loadMessageHistory() {
@@ -69,22 +107,38 @@ class ChatActivity : AppCompatActivity() {
                 val response = RetrofitClient.getApi(this@ChatActivity).getMessages(chatId)
                 if (response.isSuccessful) {
                     val messages = response.body() ?: emptyList()
-                    adapter.setMessages(messages)
+                    // Server inaonyesha tu ujumbe ambao bado haujafika kwa washiriki wote.
+                    // Tunauonyesha na kuuhifadhi local, kisha kumjulisha server "nimepokea"
+                    // ili aweze kuufuta (mradi tayari uko salama hapa simu).
+                    messages.forEach { msg ->
+                        db.messageDao().insert(msg.toEntity(chatId, myUserId))
+                        if (msg.sender?.resolvedId() != myUserId) {
+                            msg.id?.let { SocketManager.markMessageDelivered(it, chatId) }
+                        }
+                    }
+                    val merged = db.messageDao().getMessages(chatId)
+                    adapter.setMessages(merged.map { it.toMessage() })
                     scrollToBottom()
                 }
             } catch (_: Exception) {
-                // History failed to load — user can still send new messages
+                // Historia ya server imeshindwa kupakia — ile ya local inabaki kuonekana
             }
         }
     }
 
     private fun sendMessage() {
+        if (chatType == "channel" && !canPost) {
+            Toast.makeText(this, "Admin/mmiliki wa channel pekee ndiye anaweza kutuma", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val text = binding.inputMessage.text.toString().trim()
         if (text.isEmpty() || chatId.isEmpty()) return
 
         binding.inputMessage.text?.clear()
 
-        // Send in real time via socket (server also persists it to MongoDB)
+        // Tuma kwa real-time kupitia socket (server pia inaihifadhi MongoDB kwa muda,
+        // hadi ifike kwa washiriki wote wa chat)
         SocketManager.sendMessage(chatId, text)
     }
 
@@ -94,16 +148,32 @@ class ChatActivity : AppCompatActivity() {
             runOnUiThread {
                 try {
                     val message = Gson().fromJson(data.toString(), Message::class.java)
-                    // Only add if it belongs to the chat currently open
                     if (message.chat == chatId) {
-                        adapter.addMessage(message)
-                        scrollToBottom()
+                        lifecycleScope.launch {
+                            // Hifadhi local KWANZA — hii ndiyo inayothibitisha ujumbe
+                            // hautapotea hata baada ya server kuufuta.
+                            db.messageDao().insert(message.toEntity(chatId, myUserId))
+                            adapter.addMessage(message)
+                            scrollToBottom()
+
+                            // Mwambie server "nimepokea na kuhifadhi" — ukishafika kwa wote,
+                            // ataufuta DB yake moja kwa moja.
+                            if (message.sender?.resolvedId() != myUserId) {
+                                message.id?.let { SocketManager.markMessageDelivered(it, chatId) }
+                            }
+                        }
                     }
                 } catch (_: Exception) {
                     // Ignore malformed payloads
                 }
             }
         }
+    }
+
+    private fun listenForMessageStatus() {
+        // Hii ni taarifa tu kwamba server imeufuta ujumbe kwenye DB yake — hauathiri
+        // kilichohifadhiwa hapa local kwenye simu, kwa hiyo hatufanyi lolote kwa UI.
+        SocketManager.onMessageStatus { }
     }
 
     private fun scrollToBottom() {
