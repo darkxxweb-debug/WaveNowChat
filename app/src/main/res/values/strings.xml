@@ -18,11 +18,32 @@
 
     <!-- Main -->
     <string name="chats_title">Chats</string>
-    <string name="search_hint">Search users</string>
+    <string name="search_hint">Search or start new chat</string>
     <string name="no_chats_yet">No conversations yet.\nSearch a user to start chatting.</string>
     <string name="online">Online</string>
     <string name="typing">typing…</string>
     <string name="last_seen">last seen</string>
+
+    <!-- Tabs -->
+    <string name="tab_all">All</string>
+    <string name="tab_groups">Groups</string>
+    <string name="tab_channels">Channels</string>
+
+    <!-- Bottom nav -->
+    <string name="nav_chats">Chats</string>
+    <string name="nav_updates">Updates</string>
+    <string name="nav_communities">Communities</string>
+    <string name="nav_calls">Calls</string>
+
+    <!-- New chat / group / channel -->
+    <string name="new_chat">New chat</string>
+    <string name="new_group">New group</string>
+    <string name="new_channel">New channel</string>
+    <string name="group_name_hint">Group name</string>
+    <string name="channel_name_hint">Channel name</string>
+    <string name="channel_description_hint">Description (hiari)</string>
+    <string name="participants_hint">Majina ya washiriki, yaliyotenganishwa na koma</string>
+    <string name="btn_create">Unda</string>
 
     <!-- Chat -->
     <string name="message_hint">Type a message</string>

@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- WaveNow Light Theme - blue brand, WhatsApp-style layout -->
-    <color name="colorPrimary">#0D47A1</color>
-    <color name="colorPrimaryDark">#0A3880</color>
-    <color name="colorAccent">#2E9BFF</color>
+    <!-- WaveNow Dark Theme - WhatsApp-style dark layout -->
+    <color name="colorPrimary">#008069</color>
+    <color name="colorPrimaryDark">#005C4B</color>
+    <color name="colorAccent">#00A884</color>
 
-    <color name="chatBackground">#E9EEF2</color>
-    <color name="toolbarBackground">#0D47A1</color>
+    <color name="chatBackground">#0B141A</color>
+    <color name="toolbarBackground">#111B21</color>
     <color name="toolbarText">#FFFFFF</color>
 
-    <color name="bubbleSent">#D4E6FF</color>
-    <color name="bubbleReceived">#FFFFFF</color>
-    <color name="bubbleSentText">#111B21</color>
-    <color name="bubbleReceivedText">#111B21</color>
+    <color name="bubbleSent">#005C4B</color>
+    <color name="bubbleReceived">#202C33</color>
+    <color name="bubbleSentText">#E9EDEF</color>
+    <color name="bubbleReceivedText">#E9EDEF</color>
 
-    <color name="textPrimary">#111B21</color>
-    <color name="textSecondary">#667781</color>
-    <color name="divider">#D1D7DB</color>
+    <color name="textPrimary">#E9EDEF</color>
+    <color name="textSecondary">#8696A0</color>
+    <color name="divider">#222D34</color>
 
     <color name="onlineGreen">#25D366</color>
-    <color name="unreadBadge">#0D47A1</color>
+    <color name="unreadBadge">#00A884</color>
 
-    <color name="screenBackground">#FFFFFF</color>
-    <color name="inputBackground">#F0F2F5</color>
+    <color name="screenBackground">#111B21</color>
+    <color name="inputBackground">#202C33</color>
+    <color name="chipBackground">#202C33</color>
+    <color name="chipSelected">#00A884</color>
+    <color name="fabGreen">#00A884</color>
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
